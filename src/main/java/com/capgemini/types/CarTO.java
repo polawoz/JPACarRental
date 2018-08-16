@@ -1,6 +1,7 @@
 package com.capgemini.types;
 
-import java.time.Year;
+import java.util.Date;
+
 import com.capgemini.domain.enums.CarType;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +25,8 @@ public class CarTO {
     private Integer engineSize;
     private Integer power;
     private Integer mileage;
+    private Date created;
+    
     
 //    private Collection<Long> rentals= new HashSet<>();
 //    private Collection<Long> carsSupervisors= new HashSet<>();

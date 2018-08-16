@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -17,24 +19,17 @@ import com.capgemini.types.CarTO;
 @SpringBootTest
 public class CarServiceTest {
 
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CarServiceTest.class);
+	
 	@Autowired
 	CarService carService;
-	
-	
-	
-	
-	
 
 	@Test
 	public void testAssignSupervisor() {
-		fail("Not yet implemented");
-	}
 
-	@Test
-	public void testFindCarsByType() {
-		
-		//given
-		
+		// given
+
 		CarType carType = CarType.COUPE;
 		String model = "Audi A5";
 		Integer productionYear = 2011;
@@ -49,17 +44,38 @@ public class CarServiceTest {
 		CarTO savedCar = carService.saveCar(car);
 		
 		
-		//when
-		List<CarTO> foundCarsList = carService.findCarsByType(savedCar.getCarType());
 		
-		//then
+		
+		
+
+	}
+
+	@Test
+	public void testFindCarsByType() {
+
+		// given
+
+		CarType carType = CarType.COUPE;
+		String model = "Audi A5";
+		Integer productionYear = 2011;
+		String color = "CZARNY";
+		Integer engineSize = 2000;
+		Integer power = 210;
+		Integer mileage = 25000;
+
+		CarTO car = CarTO.builder().carType(carType).model(model).productionYear(productionYear).color(color)
+				.engineSize(engineSize).power(power).mileage(mileage).build();
+
+		CarTO savedCar = carService.saveCar(car);
+
+		// when
+		List<CarTO> foundCarsList = carService.findCarsByType(savedCar.getCarType());
+
+		// then
 		assertNotNull(foundCarsList);
 		assertFalse(foundCarsList.isEmpty());
 		assertTrue(foundCarsList.stream().anyMatch(b -> b.getModel().equals(model)));
-		assertTrue(foundCarsList.size()==1);
-		
-		
-		
+		assertTrue(foundCarsList.size() == 1);
 
 	}
 
@@ -71,16 +87,13 @@ public class CarServiceTest {
 	@Test
 	public void testFindCarsBySupervisor() {
 
-
-		
-		
 	}
 
 	@Test
-	public void testUpdate() {
+	public void testShouldUpdateColor() {
 
-		//given
-		
+		// given
+
 		CarType carType = CarType.COUPE;
 		String model = "Audi A5";
 		Integer productionYear = 2011;
@@ -93,22 +106,17 @@ public class CarServiceTest {
 				.engineSize(engineSize).power(power).mileage(mileage).build();
 
 		CarTO savedCar = carService.saveCar(car);
-		
-		CarTO updateParameters = CarTO.builder()
-				.id(savedCar.getId())
-				.color("ZIELONY").build();
-		
-		
-		//when
+
+		CarTO updateParameters = CarTO.builder().id(savedCar.getId()).color("ZIELONY").build();
+
+		// when
 		CarTO carTOAfterUpdate = carService.update(updateParameters);
-		CarTO carFromDB= carService.findCarById(savedCar.getId());
-		
-		
-		//then
-		assertEquals(carTOAfterUpdate.getColor(),updateParameters.getColor());
+		CarTO carFromDB = carService.findCarById(savedCar.getId());
+
+		// then
+		assertEquals(carTOAfterUpdate.getColor(), updateParameters.getColor());
 		assertEquals(carFromDB.getColor(), updateParameters.getColor());
-		
-		
+
 	}
 
 	@Test
@@ -142,6 +150,8 @@ public class CarServiceTest {
 		assertEquals(savedCar.getEngineSize(), selectedCar.getEngineSize());
 		assertEquals(savedCar.getPower(), selectedCar.getPower());
 		assertEquals(savedCar.getMileage(), selectedCar.getMileage());
+		
+		LOGGER.info("Creation time: " + selectedCar.getCreated());
 
 	}
 
@@ -180,7 +190,31 @@ public class CarServiceTest {
 
 	@Test
 	public void testRemoveCar() {
-		fail("Not yet implemented");
+
+		// given
+		CarType carType = CarType.COUPE;
+		String model = "Audi A5";
+		Integer productionYear = 2011;
+		String color = "CZARNY";
+		Integer engineSize = 2000;
+		Integer power = 210;
+		Integer mileage = 25000;
+
+		CarTO car = CarTO.builder().carType(carType).model(model).productionYear(productionYear).color(color)
+				.engineSize(engineSize).power(power).mileage(mileage).build();
+
+		CarTO savedCar = carService.saveCar(car);
+		CarTO selectedCar = carService.findCarById(savedCar.getId());
+
+		// when
+
+		carService.removeCar(CarTO.builder().id(selectedCar.getId()).build());
+
+		// then
+		CarTO searchedCar = carService.findCarById(selectedCar.getId());
+
+		assertEquals(searchedCar, null);
+
 	}
 
 }

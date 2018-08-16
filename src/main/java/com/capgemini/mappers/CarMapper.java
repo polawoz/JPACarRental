@@ -37,6 +37,7 @@ public class CarMapper {
 				.model(carEntity.getModel())
 				.power(carEntity.getPower())
 				.productionYear(carEntity.getProductionYear())
+				.created(carEntity.getCreated())
 				.build();
 		
 		return carTO;
