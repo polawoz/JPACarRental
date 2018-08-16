@@ -51,6 +51,26 @@ public class OfficeEntity implements Serializable {
     
     @OneToMany(mappedBy="returnOffice")
     private List<RentalEntity> rentalsTo = new ArrayList<>();
+
+    
+    
+    
+	public void addEmployee(EmployeeEntity employeeEntity) {
+
+		employees.add(employeeEntity);
+		employeeEntity.setOffice(this);
+		
+		
+	}
+
+	public EmployeeEntity removeEmployee(EmployeeEntity employeeEntity) {
+		
+		employees.remove(employeeEntity);
+		employeeEntity.setOffice(null);
+		
+		return employeeEntity;
+		
+	}
     
     
     

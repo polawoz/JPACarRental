@@ -49,25 +49,18 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public List<CarTO> findCarsBySupervisor(EmployeeTO employeeTO) {
 
-		List<CarEntity> carEntityList = employeeDao.findEmployeeById(employeeTO.getId()).getCarsUnderSupervision();
+		List<CarEntity> carEntityList = employeeDao.findOne(employeeTO.getId()).getCarsUnderSupervision();
 		
 		return CarMapper.mapToListTOs(carEntityList);
 	}
 
 	@Override
 	public CarTO update(CarTO carTO) {
-		// TODO
+		
 		CarEntity carEntity = carDao.findOne(carTO.getId());
 
-		CarMapper.update(carTO, carEntity);
-		//carDao.update(carEntity);
-		
-		return findCarById(carTO.getId());
-		
-		
-		
-//		CarEntity carEntity = carDao.update(CarMapper.mapToCarEntity(carTO));
-//		return CarMapper.mapToCarTO(carEntity);
+		return CarMapper.update(carTO, carEntity);
+
 	}
 
 	@Override
@@ -78,14 +71,14 @@ public class CarServiceImpl implements CarService {
 
 	@Override
 	public void removeCar(CarTO carTO) {
-		CarEntity carEntity = carDao.findOne(carTO.getId());
-		carDao.delete(carEntity);
+
+		carDao.delete(carTO.getId());
 	}
 
 	@Override
 	public void assignSupervisor(CarTO carTO, EmployeeTO employeeTO) {
 		CarEntity carEntity = carDao.findOne(carTO.getId());
-		EmployeeEntity employeeEntity = employeeDao.findEmployeeById(employeeTO.getId());
+		EmployeeEntity employeeEntity = employeeDao.findOne(employeeTO.getId());
 		carEntity.addSupervisor(employeeEntity);
 
 		
@@ -97,6 +90,14 @@ public class CarServiceImpl implements CarService {
 		CarEntity carEntity = carDao.findOne(carId);
 		
 		return CarMapper.mapToCarTO(carEntity);
+	}
+
+	@Override
+	public List<CarTO> findCarsByModelAndType(String model, CarType carType) {
+
+		List<CarEntity> carEntityList = carDao.findCarByModelAndType(model, carType);
+		
+		return CarMapper.mapToListTOs(carEntityList);
 	}
 	
 	

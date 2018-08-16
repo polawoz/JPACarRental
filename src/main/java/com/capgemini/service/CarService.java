@@ -13,6 +13,8 @@ public interface CarService {
 	List<CarTO> findCarsByType(CarType carType);
 
 	List<CarTO> findCarsByModel(String model);
+	
+	List<CarTO> findCarsByModelAndType(String model, CarType carType);
 
 	List<CarTO> findCarsBySupervisor(EmployeeTO employeeTO);
 	

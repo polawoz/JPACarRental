@@ -12,7 +12,7 @@ public interface OfficeService {
 	
 	void removeOffice(OfficeTO office);
 	
-	OfficeTO findOfficeById(OfficeTO office);
+	OfficeTO findOfficeById(Long officeId);
 	
 	OfficeTO updateOffice(OfficeTO office);
 	
@@ -25,12 +25,13 @@ public interface OfficeService {
 	List<EmployeeTO> findEmployeesFromOffice(OfficeTO office);
 	
 	List<EmployeeTO> findEmployeesFromOfficeSupervisingCar(OfficeTO office, CarTO car);
+
 	
 	void removeEmployee(EmployeeTO employee);
 	
 	EmployeeTO updateEmployee(EmployeeTO employee);
 	
-	EmployeeTO findEmployeeById(EmployeeTO employee);
+	EmployeeTO findEmployeeById(Long employeeId);
 	
 	
 	

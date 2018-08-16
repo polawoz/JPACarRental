@@ -1,6 +1,7 @@
 package com.capgemini.types;
 
 import java.util.Date;
+import java.util.List;
 
 import com.capgemini.domain.enums.CarType;
 
@@ -26,10 +27,9 @@ public class CarTO {
     private Integer power;
     private Integer mileage;
     private Date created;
+    private List<Long> supervisorsIdList;
     
     
-//    private Collection<Long> rentals= new HashSet<>();
-//    private Collection<Long> carsSupervisors= new HashSet<>();
     
 
 

@@ -21,6 +21,7 @@ public class EmployeeTO {
 	private String lastName;
 	private String firstName;
 	private Date dateOfBirth;
+	private Long officeId;
 	
 	
 

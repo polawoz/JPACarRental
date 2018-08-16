@@ -13,7 +13,7 @@ public interface CarDao extends Dao<CarEntity, Long> {
 	
 	List<CarEntity> findCarByModel(String model);
 	
-
+	List<CarEntity> findCarByModelAndType(String model, CarType carType);
 
 	
 	

@@ -2,6 +2,8 @@ package com.capgemini.types;
 
 
 
+import java.util.List;
+
 import com.capgemini.domain.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,5 +24,6 @@ public class OfficeTO {
 	private Address address;
 	private String phone;
 	private String email;
+	private List<Long> employeesIdList;
 
 }
