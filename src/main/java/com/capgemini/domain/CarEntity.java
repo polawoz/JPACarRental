@@ -1,7 +1,7 @@
 package com.capgemini.domain;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -39,88 +40,57 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@CreationTimestamp
-@UpdateTimestamp
 @Table(name = "CAR")
 public class CarEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 	@Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CarType carType;
-    @Column(nullable = false, length = 20)
-    private String model;
-    @Column(nullable = false)
-    private Integer productionYear;
-    @Column(nullable = false, length = 20)
-    private String color;
-    @Column(nullable = false)
-    private Integer engineSize;
-    @Column(nullable = false)
-    private Integer power;
-    @Column(nullable = false)
-    private Integer mileage;
-    
+	@Column(nullable = false)
+	private CarType carType;
+	@Column(nullable = false, length = 20)
+	private String model;
+	@Column(nullable = false)
+	private Integer productionYear;
+	@Column(nullable = false, length = 20)
+	private String color;
+	@Column(nullable = false)
+	private Integer engineSize;
+	@Column(nullable = false)
+	private Integer power;
+	@Column(nullable = false)
+	private Integer mileage;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="create_time")
-    private Date created;
-    
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="modify_time")
-    private Date modified;
-    
-    
- 
-    
-    
-    
-    
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "car")
+	private List<RentalEntity> rentals = new ArrayList<>();
 
-    @OneToMany(cascade= CascadeType.REMOVE, mappedBy="car")
-    private List<RentalEntity> rentals= new ArrayList<>();
-    
-    //carEntity jest wlascicielem employee
-    @ManyToMany
-    @JoinTable
-    (
-    		name="EMPLOYEE_CAR",
-    		joinColumns={ @JoinColumn(name="car_id")},
-    		inverseJoinColumns = { @JoinColumn(name="employee_id") }
-    )
-    private List<EmployeeEntity> carsSupervisors= new ArrayList<>();
+	// carEntity jest wlascicielem employee
+	@ManyToMany
+	@JoinTable(name = "EMPLOYEE_CAR", joinColumns = { @JoinColumn(name = "car_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "employee_id") })
+	private List<EmployeeEntity> carsSupervisors = new ArrayList<>();
 
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "create_time")
+	private Date created;
 
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "modify_time")
+	private Date modified;
+	
+	@Version
+	private Long version;
+
+	
 	public void addSupervisor(EmployeeEntity employeeEntity) {
-		
+
 		carsSupervisors.add(employeeEntity);
 		employeeEntity.addSupervisedCar(this);
-		
-	}
-    
-    
-    
 
-	
-    
-    
-    
-    
-    
-    
+	}
+
 }
-    
-    
-    
-    
-	
-	
-	
-	

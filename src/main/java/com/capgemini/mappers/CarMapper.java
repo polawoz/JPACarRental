@@ -17,7 +17,7 @@ public class CarMapper {
 		CarTO carTO = CarTO.builder().carType(carEntity.getCarType()).color(carEntity.getColor())
 				.engineSize(carEntity.getEngineSize()).id(carEntity.getId()).mileage(carEntity.getEngineSize())
 				.model(carEntity.getModel()).power(carEntity.getPower()).productionYear(carEntity.getProductionYear())
-				.created(carEntity.getCreated()).supervisorsIdList(mapEntityCollectionToLong(carEntity.getCarsSupervisors())).build();
+				.supervisorsIdList(mapEntityCollectionToLong(carEntity.getCarsSupervisors())).build();
 
 		return carTO;
 

@@ -28,7 +28,6 @@ import com.capgemini.types.OfficeTO;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CarServiceTest {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CarServiceTest.class);
 
 	@Autowired
 	CarService carService;
@@ -232,8 +231,11 @@ public class CarServiceTest {
 		CarTO updateParameters = CarTO.builder().id(savedCar.getId()).color("ZIELONY").build();
 
 		// when
+		
 		CarTO carTOAfterUpdate = carService.update(updateParameters);
 		CarTO carFromDB = carService.findCarById(savedCar.getId());
+		
+		
 
 		// then
 		assertEquals(carTOAfterUpdate.getColor(), updateParameters.getColor());
@@ -274,7 +276,6 @@ public class CarServiceTest {
 		assertEquals(savedCar.getPower(), selectedCar.getPower());
 		assertEquals(savedCar.getMileage(), selectedCar.getMileage());
 
-		LOGGER.info("Creation time: " + selectedCar.getCreated());
 
 	}
 

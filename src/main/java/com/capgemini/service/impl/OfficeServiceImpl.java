@@ -8,16 +8,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.capgemini.dao.CarDao;
+import com.capgemini.dao.ClientDao;
 import com.capgemini.dao.EmployeeDao;
 import com.capgemini.dao.OfficeDao;
+import com.capgemini.dao.RentalDao;
+import com.capgemini.domain.ClientEntity;
 import com.capgemini.domain.EmployeeEntity;
 import com.capgemini.domain.OfficeEntity;
+import com.capgemini.domain.RentalEntity;
+import com.capgemini.mappers.ClientMapper;
 import com.capgemini.mappers.EmployeeMapper;
 import com.capgemini.mappers.OfficeMapper;
+import com.capgemini.mappers.RentalMapper;
 import com.capgemini.service.OfficeService;
 import com.capgemini.types.CarTO;
+import com.capgemini.types.ClientTO;
 import com.capgemini.types.EmployeeTO;
 import com.capgemini.types.OfficeTO;
+import com.capgemini.types.RentalTO;
+import com.capgemini.types.RentalTOWithEntities;
 
 
 
@@ -34,6 +43,13 @@ public class OfficeServiceImpl implements OfficeService {
 	
 	@Autowired
 	CarDao carDao;
+	
+	@Autowired
+	RentalDao rentalDao;
+	
+	@Autowired
+	ClientDao clientDao;
+	
 	
 	
 
@@ -137,5 +153,60 @@ public class OfficeServiceImpl implements OfficeService {
 		
 		return OfficeMapper.mapToOfficeTO(officeEntity);
 	}
+
+	@Override
+	public RentalTO makeRental(RentalTO rentalTO) {
+
+		RentalTOWithEntities rentalTOWithEntities = RentalTOWithEntities.builder()
+				.rentalTO(rentalTO)
+				.client(clientDao.findOne(rentalTO.getClientId()))
+				.car(carDao.findOne(rentalTO.getCarId()))
+				.pickUpOffice(officeDao.findOne(rentalTO.getPickUpOfficeId()))
+				.returnOffice(officeDao.findOne(rentalTO.getReturnOfficeId()))
+				.build();
+		
+		RentalEntity rentalEntity = RentalMapper.mapToRentalEntity(rentalTOWithEntities);
+		RentalEntity savedRentalEntity = rentalDao.save(rentalEntity);
+		
+
+		
+		return RentalMapper.mapToRentalTO(savedRentalEntity);
+	}
+
+	@Override
+	public RentalTO findRentalById(RentalTO rentalTO) {
+
+		RentalEntity rentalEntity = rentalDao.findOne(rentalTO.getId());
+		
+		return RentalMapper.mapToRentalTO(rentalEntity);
+	}
+
+	@Override
+	public List<RentalTO> findRentalsByCar(CarTO carTO) {
+		
+		List<RentalEntity> rentalEntityList = rentalDao.findRentalsByCar(carTO.getId());
+		
+		return RentalMapper.mapToListTOs(rentalEntityList);
+	}
+
+	@Override
+	public ClientTO addClient(ClientTO clientTO) {
+		
+		ClientEntity clientEntity = clientDao.save(ClientMapper.mapToClientEntity(clientTO));
+		
+		
+		return ClientMapper.mapToClientTO(clientEntity);
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

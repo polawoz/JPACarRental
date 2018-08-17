@@ -3,8 +3,10 @@ package com.capgemini.service;
 import java.util.List;
 
 import com.capgemini.types.CarTO;
+import com.capgemini.types.ClientTO;
 import com.capgemini.types.EmployeeTO;
 import com.capgemini.types.OfficeTO;
+import com.capgemini.types.RentalTO;
 
 public interface OfficeService {
 	
@@ -32,6 +34,15 @@ public interface OfficeService {
 	EmployeeTO updateEmployee(EmployeeTO employee);
 	
 	EmployeeTO findEmployeeById(Long employeeId);
+	
+	RentalTO makeRental(RentalTO rentalTO);
+	
+	RentalTO findRentalById(RentalTO rentalTO);
+	
+	List<RentalTO> findRentalsByCar(CarTO carTO);
+	
+	ClientTO addClient(ClientTO clientTO);
+	
 	
 	
 	

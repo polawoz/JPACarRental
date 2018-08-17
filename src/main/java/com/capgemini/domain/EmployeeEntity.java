@@ -1,7 +1,7 @@
 package com.capgemini.domain;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -14,6 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,38 +35,43 @@ import lombok.Setter;
 @Table(name = "EMPLOYEE")
 public class EmployeeEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @Column(nullable = false, length = 30)
-    private String position;
-    @Column(nullable = false, length = 30)
-    private String lastName;
-    @Column(nullable = false, length = 30)
-    private String firstName;
-    @Column(nullable = false)
-    private Date dateOfBirth;
-    
-    @ManyToOne
-    private OfficeEntity office= new OfficeEntity();
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	@Column(nullable = false, length = 30)
+	private String position;
+	@Column(nullable = false, length = 30)
+	private String lastName;
+	@Column(nullable = false, length = 30)
+	private String firstName;
+	@Column(nullable = false)
+	private Date dateOfBirth;
 
-    @ManyToMany(mappedBy= "carsSupervisors")
-    private List<CarEntity> carsUnderSupervision = new ArrayList<>();
+	@ManyToOne
+	private OfficeEntity office = new OfficeEntity();
 
+	@ManyToMany(mappedBy = "carsSupervisors")
+	private List<CarEntity> carsUnderSupervision = new ArrayList<>();
 
 	
-	public void addSupervisedCar(CarEntity car){
-		
-		carsUnderSupervision.add(car);
-		
-		
-	}
-    
-    
-    
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "create_time")
+	private Date created;
 
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "modify_time")
+	private Date modified;
+
+	
+
+
+	public void addSupervisedCar(CarEntity car) {
+
+		carsUnderSupervision.add(car);
+
+	}
 
 }

@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import com.capgemini.domain.EmployeeEntity;
 import com.capgemini.domain.enums.CarType;
 import com.capgemini.mappers.CarMapper;
 import com.capgemini.service.CarService;
+import com.capgemini.service.CarServiceTest;
 import com.capgemini.types.CarTO;
 import com.capgemini.types.EmployeeTO;
 
@@ -22,6 +25,7 @@ import com.capgemini.types.EmployeeTO;
 @Transactional
 public class CarServiceImpl implements CarService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CarServiceImpl.class);
 	
 	@Autowired
 	private CarDao carDao;
@@ -88,6 +92,10 @@ public class CarServiceImpl implements CarService {
 	public CarTO findCarById(Long carId) {
 
 		CarEntity carEntity = carDao.findOne(carId);
+		if(carEntity!=null){
+		LOGGER.info("Car creation time: " + carEntity.getCreated());
+		LOGGER.info("Car update time: " + carEntity.getModified());
+		}
 		
 		return CarMapper.mapToCarTO(carEntity);
 	}
