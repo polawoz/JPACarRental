@@ -37,20 +37,25 @@ public class OfficeServiceImpl implements OfficeService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OfficeServiceImpl.class);
 
-	@Autowired
 	OfficeDao officeDao;
 
-	@Autowired
 	EmployeeDao employeeDao;
 
-	@Autowired
 	CarDao carDao;
 
-	@Autowired
 	RentalDao rentalDao;
 
-	@Autowired
 	ClientDao clientDao;
+
+	@Autowired
+	public OfficeServiceImpl(OfficeDao officeDao, EmployeeDao employeeDao, CarDao carDao, RentalDao rentalDao,
+			ClientDao clientDao) {
+		this.officeDao = officeDao;
+		this.employeeDao = employeeDao;
+		this.carDao = carDao;
+		this.rentalDao = rentalDao;
+		this.clientDao = clientDao;
+	}
 
 	@Override
 	public OfficeTO addOffice(OfficeTO officeTO) {

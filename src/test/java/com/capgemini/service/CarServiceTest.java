@@ -8,24 +8,21 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.capgemini.domain.Address;
 import com.capgemini.domain.enums.CarType;
 import com.capgemini.types.CarTO;
 import com.capgemini.types.ClientTO;
+import com.capgemini.types.ClientTO.ClientTOBuilder;
 import com.capgemini.types.EmployeeTO;
 import com.capgemini.types.OfficeTO;
 import com.capgemini.types.RentalTO;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = "spring.profiles.active=hsql")
-// @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CarServiceTest {
 
 	@Autowired
@@ -33,12 +30,13 @@ public class CarServiceTest {
 
 	@Autowired
 	OfficeService officeService;
+	
+	
 
 	@Test
 	public void testShouldAssignSupervisor() {
 
 		// given
-
 		CarType carType = CarType.COUPE;
 		String model = "Audi A5";
 		Integer productionYear = 2011;
@@ -52,11 +50,18 @@ public class CarServiceTest {
 
 		CarTO savedCar = carService.saveCar(car);
 
+		// ---------------------------------
 		String position = "MANAGER";
 		String lastName = "Kowalczyk";
 		String firstName = "Patryk";
-		Date dateOfBirth = new Date(1221L);
+		Date dateOfBirth = Date.valueOf("1990-12-03");
 
+		EmployeeTO employee = EmployeeTO.builder().position(position).lastName(lastName).firstName(firstName)
+				.dateOfBirth(dateOfBirth).build();
+
+		EmployeeTO savedEmployee = officeService.addEmployee(employee);
+
+		// --------------------------------
 		Address address = Address.builder().street("Niepodleglosci").buildingNumber("12").flatNumber("1")
 				.postalCode("60-333").town("Poznan").country("Polska").build();
 		String phone = "22223454321";
@@ -66,10 +71,7 @@ public class CarServiceTest {
 
 		OfficeTO savedOffice = officeService.addOffice(office);
 
-		EmployeeTO employee = EmployeeTO.builder().position(position).lastName(lastName).firstName(firstName)
-				.dateOfBirth(dateOfBirth).build();
-
-		EmployeeTO savedEmployee = officeService.addEmployee(employee);
+		// --------------------------------
 		officeService.addEmployeeToOffice(savedEmployee, savedOffice);
 
 		int carsSupervisedByEmployeeListBeforeSize = carService.findCarsBySupervisor(savedEmployee).size();
@@ -303,13 +305,13 @@ public class CarServiceTest {
 		CarTO car = CarTO.builder().id(id).carType(carType).model(model).productionYear(productionYear).color(color)
 				.engineSize(engineSize).power(power).mileage(mileage).build();
 
+		// when
 		CarTO savedCar = carService.saveCar(car);
 
-		// when
+		// then
 
 		CarTO selectedCar = carService.findCarById(savedCar.getId());
 
-		// then
 		assertNotNull(selectedCar);
 		assertEquals(savedCar.getCarType(), selectedCar.getCarType());
 		assertEquals(savedCar.getModel(), selectedCar.getModel());
@@ -384,7 +386,7 @@ public class CarServiceTest {
 	}
 
 	@Test
-	public void findCarsRentedByMoreThan10Clients() {
+	public void testShouldFindZeroCarsRentedByMoreThan10Clients() {
 
 		// given
 		// Client
@@ -396,7 +398,7 @@ public class CarServiceTest {
 		Date dateOfBirth = Date.valueOf("1966-12-12");
 		String pan = "0000222233334444";
 
-		ClientTO clientTO = ClientTO.builder().lastName("Nowak").firstName("Andrzej").address(clientAddress)
+		ClientTO clientTO = new ClientTOBuilder().lastName("Nowak").firstName("Andrzej").address(clientAddress)
 				.dateOfBirth(dateOfBirth).phone(clientPhone).email(clientEmail).pan(pan).build();
 
 		ClientTO savedClient = officeService.addClient(clientTO);
@@ -437,22 +439,6 @@ public class CarServiceTest {
 				.engineSize(engineSize2).power(power2).mileage(mileage2).build();
 
 		CarTO savedCar2 = carService.saveCar(car2);
-
-		// Rental
-		RentalTO rentalTO = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient.getId())
-				.carId(savedCar.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
-				.build();
-
-		RentalTO rentalTO2 = RentalTO.builder().startDatetime(new Timestamp(2018, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2018, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient.getId())
-				.carId(savedCar.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
-				.build();
-
-		RentalTO rentalTO3 = RentalTO.builder().startDatetime(new Timestamp(2018, 10, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2018, 10, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient.getId())
-				.carId(savedCar2.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
-				.build();
 
 		// --Car with 11 rentals
 		CarType carType3 = CarType.COUPE;
@@ -503,69 +489,85 @@ public class CarServiceTest {
 		ClientTO savedClient11 = officeService.addClient(clientTO11);
 		ClientTO savedClient12 = officeService.addClient(clientTO12);
 
-		RentalTO rentalTOa2 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient2.getId())
+		RentalTO rentalTOa2 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient2.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa3 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient2.getId())
+		RentalTO rentalTOa3 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient2.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa4 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient2.getId())
+		RentalTO rentalTOa4 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient2.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa5 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient2.getId())
+		RentalTO rentalTOa5 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient2.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa6 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient2.getId())
+		RentalTO rentalTOa6 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient2.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa7 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient7.getId())
+		RentalTO rentalTOa7 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient7.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa8 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient8.getId())
+		RentalTO rentalTOa8 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient8.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa9 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient9.getId())
+		RentalTO rentalTOa9 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient9.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa10 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient10.getId())
+		RentalTO rentalTOa10 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient10.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa11 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient11.getId())
+		RentalTO rentalTOa11 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient11.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
-		RentalTO rentalTOa12 = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 30, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 30, 0)).loanAmount(150F).clientId(savedClient12.getId())
+		RentalTO rentalTOa12 = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient12.getId())
 				.carId(savedCar3.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
 
 		int foundCarsListBeforeSize = carService.findCarsRentedByClientsOfNumberMoreThan(10L).size();
 
-		RentalTO madeRentala2 = officeService.makeRental(rentalTOa2);
-		RentalTO madeRentala3 = officeService.makeRental(rentalTOa3);
-		RentalTO madeRentala4 = officeService.makeRental(rentalTOa4);
-		RentalTO madeRentala5 = officeService.makeRental(rentalTOa5);
-		RentalTO madeRentala6 = officeService.makeRental(rentalTOa6);
-		RentalTO madeRentala7 = officeService.makeRental(rentalTOa7);
-		RentalTO madeRentala8 = officeService.makeRental(rentalTOa8);
-		RentalTO madeRentala9 = officeService.makeRental(rentalTOa9);
-		RentalTO madeRentala10 = officeService.makeRental(rentalTOa10);
-		RentalTO madeRentala11 = officeService.makeRental(rentalTOa11);
-		RentalTO madeRentala12 = officeService.makeRental(rentalTOa12);
+		officeService.makeRental(rentalTOa2);
+		officeService.makeRental(rentalTOa3);
+		officeService.makeRental(rentalTOa4);
+		officeService.makeRental(rentalTOa5);
+		officeService.makeRental(rentalTOa6);
+		officeService.makeRental(rentalTOa7);
+		officeService.makeRental(rentalTOa8);
+		officeService.makeRental(rentalTOa9);
+		officeService.makeRental(rentalTOa10);
+		officeService.makeRental(rentalTOa11);
+		officeService.makeRental(rentalTOa12);
 
 		// Other rentals
-		RentalTO madeRental = officeService.makeRental(rentalTO);
-		RentalTO madeRental2 = officeService.makeRental(rentalTO2);
-		RentalTO madeRental3 = officeService.makeRental(rentalTO3);
+
+		RentalTO rentalTO = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient.getId())
+				.carId(savedCar.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
+				.build();
+
+		RentalTO rentalTO2 = RentalTO.builder().startDatetime(Timestamp.valueOf("2018-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2018-07-09 12:15:30")).loanAmount(150F).clientId(savedClient.getId())
+				.carId(savedCar.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
+				.build();
+
+		RentalTO rentalTO3 = RentalTO.builder().startDatetime(Timestamp.valueOf("2018-10-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2018-10-09 12:15:30")).loanAmount(150F).clientId(savedClient.getId())
+				.carId(savedCar2.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
+				.build();
+
+		officeService.makeRental(rentalTO);
+		officeService.makeRental(rentalTO2);
+		officeService.makeRental(rentalTO3);
 
 		// when
 		List<CarTO> foundCarsList = carService.findCarsRentedByClientsOfNumberMoreThan(10L);
@@ -588,7 +590,7 @@ public class CarServiceTest {
 		Date dateOfBirth = Date.valueOf("1966-12-12");
 		String pan = "0000222233334444";
 
-		ClientTO clientTO = ClientTO.builder().lastName("Nowak").firstName("Andrzej").address(clientAddress)
+		ClientTO clientTO = new ClientTOBuilder().lastName("Nowak").firstName("Andrzej").address(clientAddress)
 				.dateOfBirth(dateOfBirth).phone(clientPhone).email(clientEmail).pan(pan).build();
 
 		ClientTO savedClient = officeService.addClient(clientTO);
@@ -631,30 +633,31 @@ public class CarServiceTest {
 		CarTO savedCar2 = carService.saveCar(car2);
 
 		// Rental
-		RentalTO rentalTO = RentalTO.builder().startDatetime(new Timestamp(2017, 7, 7, 12, 15, 0, 0))
-				.endDatetime(new Timestamp(2017, 7, 9, 12, 15, 0, 0)).loanAmount(150F).clientId(savedClient.getId())
+
+		RentalTO rentalTO = RentalTO.builder().startDatetime(Timestamp.valueOf("2017-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2017-07-09 12:15:30")).loanAmount(150F).clientId(savedClient.getId())
 				.carId(savedCar.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
 
-		RentalTO rentalTO2 = RentalTO.builder().startDatetime(new Timestamp(2018, 7, 7, 12, 15, 0, 0))
-				.endDatetime(new Timestamp(2018, 7, 9, 12, 15, 0, 0)).loanAmount(150F).clientId(savedClient.getId())
+		RentalTO rentalTO2 = RentalTO.builder().startDatetime(Timestamp.valueOf("2018-07-07 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2018-07-09 12:15:30")).loanAmount(150F).clientId(savedClient.getId())
 				.carId(savedCar.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
 
-		RentalTO rentalTO3 = RentalTO.builder().startDatetime(new Timestamp(2018, 10, 3, 12, 15, 0, 0))
-				.endDatetime(new Timestamp(2018, 10, 9, 12, 15, 0, 0)).loanAmount(150F).clientId(savedClient.getId())
+		RentalTO rentalTO3 = RentalTO.builder().startDatetime(Timestamp.valueOf("2018-10-03 12:15:30"))
+				.endDatetime(Timestamp.valueOf("2018-10-09 12:15:30")).loanAmount(150F).clientId(savedClient.getId())
 				.carId(savedCar2.getId()).pickUpOfficeId(savedOffice.getId()).returnOfficeId(savedOffice.getId())
 				.build();
 
-		Timestamp start_Timestamp = new Timestamp(2018, 6, 20, 11, 30, 0, 0);
-		Timestamp end_Timestamp = new Timestamp(2018, 10, 6, 16, 30, 0, 0);
+		Timestamp start_Timestamp = Timestamp.valueOf("2018-06-20 11:30:00");
+		Timestamp end_Timestamp = Timestamp.valueOf("2018-10-06 16:30:00");
 
 		Long numberOfCarsInRentalBetweenTimeperiodBefore = carService
 				.countCarsInRentalBetweenTimeperiod(start_Timestamp, end_Timestamp);
 
-		RentalTO madeRental = officeService.makeRental(rentalTO);
-		RentalTO madeRental2 = officeService.makeRental(rentalTO2);
-		RentalTO madeRental3 = officeService.makeRental(rentalTO3);
+		officeService.makeRental(rentalTO);
+		officeService.makeRental(rentalTO2);
+		officeService.makeRental(rentalTO3);
 
 		// when
 		Long numberOfCarsInRentalBetweenTimeperiod = carService.countCarsInRentalBetweenTimeperiod(start_Timestamp,

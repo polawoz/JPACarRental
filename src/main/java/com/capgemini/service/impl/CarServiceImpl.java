@@ -22,11 +22,15 @@ import com.capgemini.types.EmployeeTO;
 @Transactional
 public class CarServiceImpl implements CarService {
 
-	@Autowired
 	private CarDao carDao;
 
-	@Autowired
 	private EmployeeDao employeeDao;
+
+	@Autowired
+	public CarServiceImpl(CarDao carDao, EmployeeDao employeeDao) {
+		this.carDao = carDao;
+		this.employeeDao = employeeDao;
+	}
 
 	@Override
 	public List<CarTO> findCarsByType(CarType carType) {
