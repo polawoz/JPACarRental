@@ -1,12 +1,10 @@
 package com.capgemini.service.impl;
 
-
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +15,6 @@ import com.capgemini.domain.EmployeeEntity;
 import com.capgemini.domain.enums.CarType;
 import com.capgemini.mappers.CarMapper;
 import com.capgemini.service.CarService;
-import com.capgemini.service.CarServiceTest;
 import com.capgemini.types.CarTO;
 import com.capgemini.types.EmployeeTO;
 
@@ -25,19 +22,17 @@ import com.capgemini.types.EmployeeTO;
 @Transactional
 public class CarServiceImpl implements CarService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CarServiceImpl.class);
-	
 	@Autowired
 	private CarDao carDao;
-	
+
 	@Autowired
 	private EmployeeDao employeeDao;
 
 	@Override
 	public List<CarTO> findCarsByType(CarType carType) {
-		
+
 		List<CarEntity> carEntityList = carDao.findCarByType(carType);
-		
+
 		return CarMapper.mapToListTOs(carEntityList);
 	}
 
@@ -45,22 +40,21 @@ public class CarServiceImpl implements CarService {
 	public List<CarTO> findCarsByModel(String model) {
 
 		List<CarEntity> carEntityList = carDao.findCarByModel(model);
-		
+
 		return CarMapper.mapToListTOs(carEntityList);
 	}
-	
 
 	@Override
 	public List<CarTO> findCarsBySupervisor(EmployeeTO employeeTO) {
 
 		List<CarEntity> carEntityList = employeeDao.findOne(employeeTO.getId()).getCarsUnderSupervision();
-		
+
 		return CarMapper.mapToListTOs(carEntityList);
 	}
 
 	@Override
 	public CarTO update(CarTO carTO) {
-		
+
 		CarEntity carEntity = carDao.findOne(carTO.getId());
 
 		return CarMapper.update(carTO, carEntity);
@@ -85,18 +79,13 @@ public class CarServiceImpl implements CarService {
 		EmployeeEntity employeeEntity = employeeDao.findOne(employeeTO.getId());
 		carEntity.addSupervisor(employeeEntity);
 
-		
 	}
 
 	@Override
 	public CarTO findCarById(Long carId) {
 
 		CarEntity carEntity = carDao.findOne(carId);
-		if(carEntity!=null){
-		LOGGER.info("Car creation time: " + carEntity.getCreated());
-		LOGGER.info("Car update time: " + carEntity.getModified());
-		}
-		
+
 		return CarMapper.mapToCarTO(carEntity);
 	}
 
@@ -104,17 +93,23 @@ public class CarServiceImpl implements CarService {
 	public List<CarTO> findCarsByModelAndType(String model, CarType carType) {
 
 		List<CarEntity> carEntityList = carDao.findCarByModelAndType(model, carType);
-		
+
 		return CarMapper.mapToListTOs(carEntityList);
 	}
-	
-	
-	
-	
 
-	
-	
-	
-	
-	
+	@Override
+	public List<CarTO> findCarsRentedByClientsOfNumberMoreThan(Long clientsNumber) {
+		List<CarEntity> foundCarsList = carDao.findCarsRentedByClientsOfNumberMoreThan(clientsNumber);
+		return CarMapper.mapToListTOs(foundCarsList);
+	}
+
+	@Override
+	public Long countCarsInRentalBetweenTimeperiod(Timestamp start_Timestamp, Timestamp end_Timestamp) {
+
+		Long numberOfCarsInRentalBetweenTimeperiod = carDao.countCarsInRentalBetweenTimeperiod(start_Timestamp,
+				end_Timestamp);
+
+		return numberOfCarsInRentalBetweenTimeperiod;
+	}
+
 }

@@ -1,7 +1,6 @@
 package com.capgemini.domain;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,7 +65,6 @@ public class CarEntity implements Serializable {
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "car")
 	private List<RentalEntity> rentals = new ArrayList<>();
 
-	// carEntity jest wlascicielem employee
 	@ManyToMany
 	@JoinTable(name = "EMPLOYEE_CAR", joinColumns = { @JoinColumn(name = "car_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "employee_id") })
@@ -81,11 +79,10 @@ public class CarEntity implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "modify_time")
 	private Date modified;
-	
+
 	@Version
 	private Long version;
 
-	
 	public void addSupervisor(EmployeeEntity employeeEntity) {
 
 		carsSupervisors.add(employeeEntity);

@@ -1,7 +1,5 @@
 package com.capgemini.domain;
 
-
-
 import javax.persistence.Embeddable;
 
 import lombok.AllArgsConstructor;
@@ -17,7 +15,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Embeddable
 public class Address {
-	
 
 	private String street;
 	private String buildingNumber;
@@ -25,10 +22,5 @@ public class Address {
 	private String postalCode;
 	private String town;
 	private String country;
-
-
-	
-	
-	
 
 }

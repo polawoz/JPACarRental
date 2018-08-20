@@ -26,12 +26,11 @@ public interface OfficeService {
 	
 	List<EmployeeTO> findEmployeesFromOffice(OfficeTO office);
 	
+	List<EmployeeTO> findEmployeesSupervisingCar(CarTO car);
+	
 	List<EmployeeTO> findEmployeesFromOfficeSupervisingCar(OfficeTO office, CarTO car);
 
-	
-	void removeEmployee(EmployeeTO employee);
-	
-	EmployeeTO updateEmployee(EmployeeTO employee);
+	List<EmployeeTO> findEmployeesByPosition(EmployeeTO employee);
 	
 	EmployeeTO findEmployeeById(Long employeeId);
 	
@@ -42,6 +41,11 @@ public interface OfficeService {
 	List<RentalTO> findRentalsByCar(CarTO carTO);
 	
 	ClientTO addClient(ClientTO clientTO);
+	
+	ClientTO findClientById(ClientTO clientTO);
+	
+	void getLoggerInfoOnCreationAndUpdate(Object objectTO);
+	
 	
 	
 	

@@ -15,11 +15,9 @@ public class RentalDaoImpl extends AbstractDao<RentalEntity, Long> implements Re
 	@Override
 	public List<RentalEntity> findRentalsByCar(Long carId) {
 
-		TypedQuery<RentalEntity> query = entityManager.createQuery(
-				"SELECT rental FROM RentalEntity rental "
-				
-				+ "WHERE rental.car.id =:carId",
-				RentalEntity.class);
+		TypedQuery<RentalEntity> query = entityManager.createQuery("SELECT rental FROM RentalEntity rental "
+
+				+ "WHERE rental.car.id =:carId", RentalEntity.class);
 		query.setParameter("carId", carId);
 		return query.getResultList();
 	}

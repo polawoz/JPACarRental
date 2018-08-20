@@ -76,17 +76,6 @@ public class CarMapper {
 			return null;
 		}
 
-		// CarEntity carEntity = new CarEntity();
-		// carEntity.setCarType(carTO.getCarType());
-		// carEntity.setColor(carTO.getColor());
-		// carEntity.setEngineSize(carTO.getEngineSize());
-		// //co z tym Id??
-		// carEntity.setId(carTO.getId());
-		// carEntity.setMileage(carTO.getMileage());
-		// carEntity.setModel(carTO.getModel());
-		// carEntity.setPower(carTO.getPower());
-		// carEntity.setProductionYear(carTO.getProductionYear());
-
 		CarEntity carEntity = CarEntity.builder().carType(carTO.getCarType()).color(carTO.getColor())
 				.engineSize(carTO.getEngineSize()).id(carTO.getId()).mileage(carTO.getMileage()).model(carTO.getModel())
 				.power(carTO.getPower()).productionYear(carTO.getProductionYear()).build();

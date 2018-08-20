@@ -8,8 +8,4 @@ import com.capgemini.domain.OfficeEntity;
 @Repository
 public class OfficeDaoImpl extends AbstractDao<OfficeEntity, Long> implements OfficeDao {
 
-
-
-	
-
 }

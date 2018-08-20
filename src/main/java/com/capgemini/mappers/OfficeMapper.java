@@ -16,61 +16,53 @@ public class OfficeMapper {
 			return null;
 		}
 
-
-		OfficeTO officeTO = OfficeTO.builder()
-				.id(officeEntity.getId())
-				.address(mapToAddressTO(officeEntity.getAddress()))
-				.phone(officeEntity.getPhone())
-				.email(officeEntity.getEmail())
-				.employeesIdList(mapEntityCollectionToLong(officeEntity.getEmployees()))
+		OfficeTO officeTO = OfficeTO.builder().id(officeEntity.getId())
+				.address(mapToAddressTO(officeEntity.getAddress())).phone(officeEntity.getPhone())
+				.email(officeEntity.getEmail()).employeesIdList(mapEntityCollectionToLong(officeEntity.getEmployees()))
 				.build();
 
 		return officeTO;
 
 	}
 
-	private static List<Long> mapEntityCollectionToLong(List<EmployeeEntity> employeeList){
-		
-		
-		
-		List<Long> employeeListTO=new ArrayList<>();
-		
-		if(employeeList==null){
+	private static List<Long> mapEntityCollectionToLong(List<EmployeeEntity> employeeList) {
+
+		List<Long> employeeListTO = new ArrayList<>();
+
+		if (employeeList == null) {
 			return employeeListTO;
 		}
-		
-		for(EmployeeEntity emp: employeeList){
+
+		for (EmployeeEntity emp : employeeList) {
 			employeeListTO.add(emp.getId());
-			
+
 		}
 		return employeeListTO;
-	
+
 	}
-	
-	
-	private static Address mapToAddressTO(Address adressEntity){
-		
+
+	private static Address mapToAddressTO(Address adressEntity) {
+
 		Address addressTO = Address.builder().street(adressEntity.getStreet())
-				.buildingNumber(adressEntity.getBuildingNumber())
-				.flatNumber(adressEntity.getFlatNumber())
+				.buildingNumber(adressEntity.getBuildingNumber()).flatNumber(adressEntity.getFlatNumber())
 				.postalCode(adressEntity.getPostalCode()).town(adressEntity.getTown())
 				.country(adressEntity.getCountry()).build();
-		
+
 		return addressTO;
 	}
 
 	public static OfficeEntity update(OfficeTO officeTO, OfficeEntity officeEntity) {
 
-		if(officeTO.getAddress()!=null){
-			officeEntity.setAddress(mapToAddressTO(officeEntity.getAddress()));
+		if (officeTO.getAddress() != null) {
+			officeEntity.setAddress(mapToAddressTO(officeTO.getAddress()));
 		}
-		if(officeTO.getEmail()!=null){
-			officeEntity.setEmail(officeEntity.getEmail());
+		if (officeTO.getEmail() != null) {
+			officeEntity.setEmail(officeTO.getEmail());
 		}
-		if(officeTO.getPhone()!=null){
-			officeEntity.setPhone(officeEntity.getPhone());
+		if (officeTO.getPhone() != null) {
+			officeEntity.setPhone(officeTO.getPhone());
 		}
-		
+
 		return officeEntity;
 
 	}
@@ -94,7 +86,7 @@ public class OfficeMapper {
 	}
 
 	public static List<OfficeTO> mapToListTOs(List<OfficeEntity> officeEntityList) {
-		
+
 		List<OfficeTO> mappedList = new ArrayList<>();
 
 		for (OfficeEntity o : officeEntityList) {

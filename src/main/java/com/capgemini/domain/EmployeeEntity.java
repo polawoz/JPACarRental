@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -54,7 +55,6 @@ public class EmployeeEntity implements Serializable {
 	@ManyToMany(mappedBy = "carsSupervisors")
 	private List<CarEntity> carsUnderSupervision = new ArrayList<>();
 
-	
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "create_time")
@@ -65,8 +65,8 @@ public class EmployeeEntity implements Serializable {
 	@Column(name = "modify_time")
 	private Date modified;
 
-	
-
+	@Version
+	private Long version;
 
 	public void addSupervisedCar(CarEntity car) {
 

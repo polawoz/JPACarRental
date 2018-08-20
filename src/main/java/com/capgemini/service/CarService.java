@@ -1,5 +1,6 @@
 package com.capgemini.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import com.capgemini.domain.enums.CarType;
@@ -26,6 +27,10 @@ public interface CarService {
 	CarTO saveCar(CarTO car);
 	
 	void removeCar(CarTO car);
+	
+	List<CarTO> findCarsRentedByClientsOfNumberMoreThan(Long clientsNumber);
+
+	Long countCarsInRentalBetweenTimeperiod(Timestamp start_Timestamp, Timestamp end_Timestamp);
 	
 	
 	

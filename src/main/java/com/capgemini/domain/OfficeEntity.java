@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -54,8 +55,6 @@ public class OfficeEntity implements Serializable {
 	@OneToMany(mappedBy = "returnOffice")
 	private List<RentalEntity> rentalsTo = new ArrayList<>();
 
-
-	
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "create_time")
@@ -65,8 +64,10 @@ public class OfficeEntity implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "modify_time")
 	private Date modified;
-	
-	
+
+	@Version
+	private Long version;
+
 	public void addEmployee(EmployeeEntity employeeEntity) {
 
 		employees.add(employeeEntity);
